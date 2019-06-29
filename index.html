@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <title>台語小教室</title>
+  </head>
+  <style>
+    h1,
+    li {
+      font-family: Microsoft JhengHei;
+    }
+    .play {
+      background-color: rgb(255, 255, 255);
+      color: rgb(22, 38, 189);
+      padding: 0 0;
+      font-size: 16px;
+      cursor: pointer;
+      font-family: Microsoft JhengHei;
+      border: none;
+    }
+
+    #change_mode {
+      cursor: pointer;
+      font-family: Microsoft JhengHei;
+      background-color: rgb(8, 20, 134);
+      color: white;
+      padding: 5px;
+      margin: 7px;
+      font-weight: bold;
+      -webkit-transition-duration: 0.4s; /* Safari */
+      transition-duration: 0.4s;
+    }
+    #change_mode:hover {
+      background-color: #ffffff;
+      color: rgb(8, 20, 134);
+    }
+  </style>
+  <script>
+    function playAudio() {
+      var id = $(event.target)
+        .children()
+        .attr("id");
+      $("#" + id)[0].play();
+    }
+    function toggle() {
+      if ($("#test").css("display") === "none") {
+        $("#test").css({ display: "block" });
+        $("#learn").css({ display: "none" });
+        $("#change_mode").html("回去學習");
+      } else {
+        $("#test").css({ display: "none" });
+        $("#learn").css({ display: "block" });
+        $("#change_mode").html("進入測驗");
+      }
+    }
+
+    var x = 0;
+    function start_test() {
+      $("#start_test").css({ display: "none" });
+      var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      arr = shuffle(arr);
+      correct = arr.slice(0, 5);
+      console.log(correct);
+      console.log(arr);
+
+      var $button = $("<button>", { class: "play", onclick: "playAudio()" });
+      var $i = $("<i>", { class: "fa fa-play" });
+      var $audio = $("<audio>", { id: correct[x] });
+      var $source = $("<source>", {
+        src: correct[x] + ".mp3",
+        type: "audio/mpeg"
+      });
+      $button.append($i);
+      $i.append($audio);
+      $audio.append($source);
+      $("#question").append($button);
+      x++;
+      var $next = $("<button>", { class: "next", onclick: "next()" });
+      $next.html("下一題");
+      $("#next_div").append($next);
+    }
+    function next() {
+      $("#question").html("");
+      var $button = $("<button>", { class: "play", onclick: "playAudio()" });
+      var $i = $("<i>", { class: "fa fa-play" });
+      var $audio = $("<audio>", { id: correct[x] });
+      var $source = $("<source>", {
+        src: correct[x] + ".mp3",
+        type: "audio/mpeg"
+      });
+      $button.append($i);
+      $i.append($audio);
+      $audio.append($source);
+      $("#question").append($button);
+      x++;
+    }
+
+    function shuffle(array) {
+      var currentIndex = array.length,
+        temporaryValue,
+        randomIndex;
+
+      // While there remain elements to shuffle...
+      while (0 !== currentIndex) {
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+
+      return array;
+    }
+  </script>
+  <body>
+    <div class="container-fluid">
+      <button id="change_mode" onclick="toggle()">進入測驗</button>
+    </div>
+    <div id="learn" class="container-fluid">
+      <h1>數字：</h1>
+      <ul>
+        <li>
+          1
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="1">
+                <source src="1.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          2
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="2">
+                <source src="2.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          3
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="3">
+                <source src="3.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          4
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="4">
+                <source src="4.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          5
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="5">
+                <source src="5.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          6
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="6">
+                <source src="6.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          7
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="7">
+                <source src="7.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          8
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="8">
+                <source src="8.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          9
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="9">
+                <source src="9.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+        <li>
+          10
+          <button class="play" onclick="playAudio()">
+            <i class="fa fa-play">
+              <audio id="10">
+                <source src="10.mp3" type="audio/mpeg" />
+              </audio>
+            </i>
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div id="test" class="container-fluid" style="display: none">
+      <h1>小測驗：</h1>
+      <button id="start_test" onclick="start_test()">開始測驗</button>
+      <div id="question" class="container-fluid"></div>
+      <div id="next_div"></div>
+    </div>
+  </body>
+</html>
