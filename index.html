@@ -16,20 +16,63 @@
     <title>台語小教室</title>
   </head>
   <style>
-    h1,
-    li {
+    li,
+    h4,
+    h5 {
       font-family: Microsoft JhengHei;
+    }
+
+    #test_h4 {
+      margin: 0;
+      padding: 10px 0 18px 0;
+    }
+    h5 {
+      margin: 0px;
+      padding: 15px 0 15px 10px;
+    }
+
+    .fa {
+      font-size: 16px;
+      width: 25px;
+      height: 25px;
+      padding: 3px 0 0 3px;
+      border: 1.2px solid rgb(29, 19, 168);
+      background-color: rgb(29, 19, 168);
+      color: rgb(218, 253, 255);
+      border-radius: 50%;
+      -webkit-transition-duration: 0.3s; /* Safari */
+      transition-duration: 0.3s;
+    }
+
+    .fa:hover {
+      background-color: rgb(218, 253, 255);
+      color: rgb(29, 19, 168);
+    }
+
+    li {
+      padding: 6px 0;
     }
     .play {
       background-color: rgb(255, 255, 255);
       color: rgb(22, 38, 189);
-      padding: 0 0;
+      padding: 0 10px;
       font-size: 16px;
       cursor: pointer;
       font-family: Microsoft JhengHei;
       border: none;
     }
-
+    button:focus {
+      outline: 0;
+    }
+    #alert,
+    #score_h4 {
+      padding-top: 10px;
+    }
+    #alert {
+      position: absolute;
+      top: 2px;
+      left: 120px;
+    }
     #change_mode {
       cursor: pointer;
       font-family: Microsoft JhengHei;
@@ -44,6 +87,78 @@
     #change_mode:hover {
       background-color: #ffffff;
       color: rgb(8, 20, 134);
+    }
+
+    .container_label {
+      display: block;
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      font-size: 22px;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .container_label input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .checkmark {
+      position: absolute;
+      top: 6px;
+      left: 0;
+      height: 25px;
+      width: 25px;
+      background-color: #eee;
+    }
+
+    /* On mouse-over, add a grey background color */
+    .container_label:hover input ~ .checkmark {
+      background-color: #ccc;
+    }
+
+    /* When the checkbox is checked, add a blue background */
+    .container_label input:checked ~ .checkmark {
+      background-color: #2196f3;
+    }
+
+    /* Create the checkmark/indicator (hidden when not checked) */
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    /* Show the checkmark when checked */
+    .container_label input:checked ~ .checkmark:after {
+      display: block;
+    }
+
+    /* Style the checkmark/indicator */
+    .container_label .checkmark:after {
+      left: 9px;
+      top: 5px;
+      width: 8px;
+      height: 13px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
+    }
+
+    .questionNumber {
+      font-weight: bold;
+      border-bottom: 1px solid rgb(22, 1, 116);
+      display: inline-block;
+      line-height: 29px;
     }
   </style>
   <script>
@@ -64,45 +179,309 @@
         $("#change_mode").html("進入測驗");
       }
     }
+    var list = [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      "您好",
+      "妳很漂亮",
+      "謝謝",
+      "別客氣",
+      "我愛你",
+      "聽不懂",
+      "對不起",
+      "不好意思",
+      "這是什麼",
+      "不知道",
+      "再見",
+      "要去哪裡",
+      "吃飯",
+      "高興嗎",
+      "很高興",
+      "不高興",
+      "有問題嗎",
+      "有問題",
+      "沒問題",
+      "逛街",
+      "約會",
+      "說台語",
+      "很有趣",
+      "阿嬤你好，我是從香港來的大學生",
+      "阿嬤吃飽了嗎",
+      "吃飽了",
+      "還沒吃",
+      "我們可以和你聊天嗎",
+      "今天過得怎麼樣",
+      "祝你身體健康",
+      "阿嬤阿公再見"
+    ];
+    $(document).ready(function() {
+      for (i = 1; i < 42; i++) {
+        var $li = $("<li>");
+        $li.html(list[i - 1]);
+        var $button = $("<button>", { class: "play", onclick: "playAudio()" });
+        var $i = $("<i>", { class: "fa fa-play" });
+        var $audio = $("<audio>", { id: i });
+        var $source = $("<source>", {
+          src: i + ".mp3",
+          type: "audio/mpeg"
+        });
+        $li.append($button);
+        $button.append($i);
+        $i.append($audio);
+        $audio.append($source);
+        if (i < 11) {
+          $("#ul1").append($li);
+        } else if (i >= 11 && i < 34) {
+          $("#ul2").append($li);
+        } else {
+          $("#ul3").append($li);
+        }
+      }
+    });
+
+    var question_number = 10;
+    var arr = [];
+    for (i = 1; i < 42; i++) {
+      arr.push(i);
+    }
+    arr = shuffle(arr);
+    var correct = arr.slice(0, question_number);
 
     var x = 0;
+    var answer = 0;
+    var score = 0;
     function start_test() {
       $("#start_test").css({ display: "none" });
-      var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      arr = shuffle(arr);
-      correct = arr.slice(0, 5);
+      score = 0;
+      $("#score").html(score);
+
       console.log(correct);
       console.log(arr);
+      var option = arr.slice();
+      option.splice(x, 1);
+      shuffle(option);
+      console.log(option);
 
+      var allOptions = option.slice(0, 3);
+      allOptions.push(correct[x]);
+      shuffle(allOptions);
+      console.log(allOptions);
+
+      var $div_questionNumber = $("<div>", { class: "row questionNumber" });
+
+      $div_questionNumber.html("第" + (x + 1) + "題：");
+      var $div = $("<div>", { class: "row" });
       var $button = $("<button>", { class: "play", onclick: "playAudio()" });
+      var $h5 = $("<h5>");
+      $h5.html("再聽一次：");
       var $i = $("<i>", { class: "fa fa-play" });
       var $audio = $("<audio>", { id: correct[x] });
       var $source = $("<source>", {
         src: correct[x] + ".mp3",
         type: "audio/mpeg"
       });
+      $div.append($h5);
+      $div.append($button);
       $button.append($i);
       $i.append($audio);
       $audio.append($source);
-      $("#question").append($button);
+      $("#question").append($div_questionNumber);
+      $("#question").append($div);
+      $("#" + correct[x])[0].play();
       x++;
+
+      var $div_container = $("<div>", { id: "inputContainer" });
+      var $label1 = $("<label>", { class: "container_label" });
+      var $input1 = $("<input>", {
+        class: "radio",
+        type: "checkbox",
+        value: allOptions[0],
+        style: "display:inline"
+      });
+      var $h3_1 = $("<h3>");
+      $h3_1.text(list[allOptions[0] - 1]);
+      var $checkmark1 = $("<span>", { class: "checkmark" });
+
+      var $label2 = $("<label>", { class: "container_label" });
+      var $input2 = $("<input>", {
+        class: "radio",
+        type: "checkbox",
+        value: allOptions[1],
+        style: "display:inline"
+      });
+      var $h3_2 = $("<h3>");
+      $h3_2.text(list[allOptions[1] - 1]);
+      var $checkmark2 = $("<span>", { class: "checkmark" });
+
+      var $label3 = $("<label>", { class: "container_label" });
+      var $input3 = $("<input>", {
+        class: "radio",
+        type: "checkbox",
+        value: allOptions[2],
+        style: "display:inline"
+      });
+      var $h3_3 = $("<h3>");
+      $h3_3.text(list[allOptions[2] - 1]);
+      var $checkmark3 = $("<span>", { class: "checkmark" });
+
+      var $label4 = $("<label>", { class: "container_label" });
+      var $input4 = $("<input>", {
+        class: "radio",
+        type: "checkbox",
+        value: allOptions[3],
+        style: "display:inline"
+      });
+      var $h3_4 = $("<h3>");
+      $h3_4.text(list[allOptions[3] - 1]);
+      var $checkmark4 = $("<span>", { class: "checkmark" });
+
+      $($label1).append($input1);
+      $($label1).append($h3_1);
+      $($label1).append($checkmark1);
+      $($label2).append($input2);
+      $($label2).append($h3_2);
+      $($label2).append($checkmark2);
+      $($label3).append($input3);
+      $($label3).append($h3_3);
+      $($label3).append($checkmark3);
+      $($label4).append($input4);
+      $($label4).append($h3_4);
+      $($label4).append($checkmark4);
+      $($div_container).append($label1);
+      $($div_container).append($label2);
+      $($div_container).append($label3);
+      $($div_container).append($label4);
+      $("#question").append($div_container);
+
       var $next = $("<button>", { class: "next", onclick: "next()" });
       $next.html("下一題");
       $("#next_div").append($next);
     }
     function next() {
+      if (answer == correct[x - 1]) {
+        $("#alert").html("答對了！");
+        setTimeout("$('#alert').html('')", 1000);
+        score++;
+        $("#score").html(score);
+      } else {
+        $("#alert").html("答錯了QQ");
+        setTimeout("$('#alert').html('')", 1000);
+      }
+
+      if (x === question_number) {
+        $("#question").html("");
+        $("#next_div").html("");
+        $("#start_test").css({ display: "block" });
+        $("#start_test").html("再玩一次!!");
+
+        shuffle(arr);
+        correct = arr.slice(0, question_number);
+
+        x = 0;
+        return false;
+      }
+      $("#" + correct[x])[0].play();
       $("#question").html("");
+      var $div_questionNumber = $("<div>", { class: "row questionNumber" });
+      $div_questionNumber.html("第" + (x + 1) + "題：");
+      var $div = $("<div>", { class: "row" });
       var $button = $("<button>", { class: "play", onclick: "playAudio()" });
+      var $h5 = $("<h5>");
+      $h5.html("再聽一次：");
       var $i = $("<i>", { class: "fa fa-play" });
       var $audio = $("<audio>", { id: correct[x] });
       var $source = $("<source>", {
         src: correct[x] + ".mp3",
         type: "audio/mpeg"
       });
+      $div.append($h5);
+      $div.append($button);
       $button.append($i);
       $i.append($audio);
       $audio.append($source);
-      $("#question").append($button);
+      $("#question").append($div_questionNumber);
+      $("#question").append($div);
+
+      var option = arr.slice();
+      option.splice(x, 1);
+      shuffle(option);
+
+      var allOptions = option.slice(0, 3);
+      allOptions.push(correct[x]);
+      shuffle(allOptions);
+      console.log(allOptions);
+
+      var $div_container = $("<div>", { id: "inputContainer" });
+      var $label1 = $("<label>", { class: "container_label" });
+      var $input1 = $("<input>", {
+        class: "radio",
+        type: "checkbox",
+        value: allOptions[0],
+        style: "display:inline"
+      });
+      var $h3_1 = $("<h3>");
+      $h3_1.text(list[allOptions[0] - 1]);
+      var $checkmark1 = $("<span>", { class: "checkmark" });
+
+      var $label2 = $("<label>", { class: "container_label" });
+      var $input2 = $("<input>", {
+        class: "radio",
+        type: "checkbox",
+        value: allOptions[1],
+        style: "display:inline"
+      });
+      var $h3_2 = $("<h3>");
+      $h3_2.text(list[allOptions[1] - 1]);
+      var $checkmark2 = $("<span>", { class: "checkmark" });
+
+      var $label3 = $("<label>", { class: "container_label" });
+      var $input3 = $("<input>", {
+        class: "radio",
+        type: "checkbox",
+        value: allOptions[2],
+        style: "display:inline"
+      });
+      var $h3_3 = $("<h3>");
+      $h3_3.text(list[allOptions[2] - 1]);
+      var $checkmark3 = $("<span>", { class: "checkmark" });
+
+      var $label4 = $("<label>", { class: "container_label" });
+      var $input4 = $("<input>", {
+        class: "radio",
+        type: "checkbox",
+        value: allOptions[3],
+        style: "display:inline"
+      });
+      var $h3_4 = $("<h3>");
+      $h3_4.text(list[allOptions[3] - 1]);
+      var $checkmark4 = $("<span>", { class: "checkmark" });
+
+      $($label1).append($input1);
+      $($label1).append($h3_1);
+      $($label1).append($checkmark1);
+      $($label2).append($input2);
+      $($label2).append($h3_2);
+      $($label2).append($checkmark2);
+      $($label3).append($input3);
+      $($label3).append($h3_3);
+      $($label3).append($checkmark3);
+      $($label4).append($input4);
+      $($label4).append($h3_4);
+      $($label4).append($checkmark4);
+      $($div_container).append($label1);
+      $($div_container).append($label2);
+      $($div_container).append($label3);
+      $($div_container).append($label4);
+      $("#question").append($div_container);
+
       x++;
     }
 
@@ -125,118 +504,41 @@
 
       return array;
     }
+
+    $(document).on("change", "[type=checkbox]", function() {
+      $("input:checkbox")
+        .not(this)
+        .prop("checked", false);
+      answer = $(this).val();
+      console.log(answer);
+    });
   </script>
   <body>
     <div class="container-fluid">
-      <button id="change_mode" onclick="toggle()">進入測驗</button>
+      <div class="row">
+        <div class="col-sm-2">
+          <button id="change_mode" onclick="toggle()">進入測驗</button>
+        </div>
+      </div>
     </div>
     <div id="learn" class="container-fluid">
-      <h1>數字：</h1>
-      <ul>
-        <li>
-          1
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="1">
-                <source src="1.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          2
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="2">
-                <source src="2.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          3
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="3">
-                <source src="3.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          4
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="4">
-                <source src="4.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          5
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="5">
-                <source src="5.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          6
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="6">
-                <source src="6.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          7
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="7">
-                <source src="7.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          8
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="8">
-                <source src="8.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          9
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="9">
-                <source src="9.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-        <li>
-          10
-          <button class="play" onclick="playAudio()">
-            <i class="fa fa-play">
-              <audio id="10">
-                <source src="10.mp3" type="audio/mpeg" />
-              </audio>
-            </i>
-          </button>
-        </li>
-      </ul>
+      <h4 style="padding-top: 13px">數字：</h4>
+      <ul id="ul1"></ul>
+      <h4>日常用語：</h4>
+      <ul id="ul2"></ul>
+      <h4>簡單例句：</h4>
+      <ul id="ul3"></ul>
     </div>
     <div id="test" class="container-fluid" style="display: none">
-      <h1>小測驗：</h1>
+      <div class="row">
+        <div class="col-sm-2">
+          <h4 id="test_h4">小測驗：</h4>
+        </div>
+        <div class="col-sm-2">
+          <h4 id="score_h4">分數：<span id="score">0</span>分</h4>
+        </div>
+        <h4 id="alert"></h4>
+      </div>
       <button id="start_test" onclick="start_test()">開始測驗</button>
       <div id="question" class="container-fluid"></div>
       <div id="next_div"></div>
